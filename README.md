@@ -1,6 +1,15 @@
-# 🤖 LeadFlow AI
-
-**AI-Powered Lead Generation System for Real Estate Professionals**
+<div align="center">
+  <img src="logo.svg" alt="LeadFlow AI Logo" width="600"/>
+  
+  # 🤖 LeadFlow AI
+  
+  **AI-Powered Lead Generation System for Real Estate Professionals**
+  
+  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+  [![Python 3.8+](https://img.shields.io/badge/Python-3.8+-brightgreen.svg)](https://python.org)
+  [![Real Estate](https://img.shields.io/badge/Industry-Real%20Estate-orange.svg)](https://github.com/Jmichael-Labs/LeadFlowAI)
+  
+</div>
 
 ## 🎯 Overview
 
@@ -29,9 +38,40 @@ LeadFlow AI is a comprehensive automation suite that helps real estate investors
 ## 📊 Results You Can Expect
 
 - **50-200 qualified leads per week**
-- **$150K-$800K average property values**
+- **$150K-$800K average property values**  
 - **10-15% conversion rate to actual deals**
 - **$100-$500 per lead market value**
+
+## 🎬 See It In Action
+
+```bash
+$ python main.py full --cities 3
+
+    ╔══════════════════════════════════════════════════════════════╗
+    ║                        🤖 LeadFlow AI                        ║
+    ║              AI-Powered Real Estate Lead Generation          ║
+    ║                                                              ║
+    ║  🎯 Find Real Estate Investors                              ║
+    ║  🏠 Discover Inheritance Properties                         ║
+    ║  📊 AI-Powered Lead Scoring                                 ║
+    ║  💰 Generate $5K-15K Monthly Revenue                        ║
+    ╚══════════════════════════════════════════════════════════════╝
+
+🔍 Starting LinkedIn Investor Hunt...
+✅ Miami: Found 28 investors
+✅ Atlanta: Found 32 investors  
+✅ Phoenix: Found 25 investors
+
+🏠 Starting Inheritance Property Hunt...
+✅ Miami: Found 12 inheritance properties
+✅ Atlanta: Found 15 inheritance properties
+✅ Phoenix: Found 18 inheritance properties
+
+💰 REVENUE POTENTIAL:
+- Investor Lead Value: $17,000 (@$200 each)
+- Property Lead Value: $11,250 (@$250 each)  
+- Total Lead Market Value: $28,250
+```
 
 ## 🛠️ Technical Stack
 
