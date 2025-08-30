@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="logo.svg" alt="LeadFlow AI Logo" width="600"/>
+  <img src="logo.png" alt="LeadFlow AI Logo" width="600"/>
   
   # 🤖 LeadFlow AI
   
