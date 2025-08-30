@@ -1,0 +1,217 @@
+#!/usr/bin/env python3
+"""
+🤖 LeadFlow AI - Main Application
+Professional lead generation system for real estate professionals
+"""
+
+import argparse
+import sys
+import os
+from datetime import datetime
+
+# Add src to Python path
+sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+
+from config.settings import LeadFlowConfig
+from src.investor_finder.linkedin_scraper import LinkedInInvestorScraper
+from src.property_scanner.inheritance_finder import InheritancePropertyFinder
+
+def print_banner():
+    """Display LeadFlow AI banner"""
+    banner = """
+    ╔══════════════════════════════════════════════════════════════╗
+    ║                        🤖 LeadFlow AI                        ║
+    ║              AI-Powered Real Estate Lead Generation          ║
+    ║                                                              ║
+    ║  🎯 Find Real Estate Investors                              ║
+    ║  🏠 Discover Inheritance Properties                         ║
+    ║  📊 AI-Powered Lead Scoring                                 ║
+    ║  💰 Generate $5K-15K Monthly Revenue                        ║
+    ╚══════════════════════════════════════════════════════════════╝
+    """
+    print(banner)
+
+def run_investor_hunt(args):
+    """Run LinkedIn investor discovery"""
+    print("\n🔍 Starting LinkedIn Investor Hunt...")
+    print("=" * 50)
+    
+    scraper = LinkedInInvestorScraper()
+    investors = scraper.run_investor_hunt(
+        target_cities=args.cities,
+        investors_per_city=args.max_investors
+    )
+    
+    if investors:
+        print(f"\n✅ SUCCESS: Found {len(investors)} qualified investors")
+        print(f"💰 Estimated Value: ${len(investors) * 200:,} (@$200 per lead)")
+    else:
+        print("\n❌ No investors found. Check your LinkedIn login and try again.")
+    
+    return investors
+
+def run_property_hunt(args):
+    """Run inheritance property discovery"""
+    print("\n🏠 Starting Inheritance Property Hunt...")
+    print("=" * 50)
+    
+    finder = InheritancePropertyFinder()
+    properties = finder.run_inheritance_hunt(
+        target_cities=args.cities,
+        max_properties_per_city=args.max_properties
+    )
+    
+    if properties:
+        total_value = sum(prop['estimated_value'] for prop in properties)
+        print(f"\n✅ SUCCESS: Found {len(properties)} inheritance properties")
+        print(f"🏠 Total Property Value: ${total_value:,}")
+        print(f"💰 Estimated Lead Value: ${len(properties) * 250:,} (@$250 per lead)")
+    else:
+        print("\n❌ No properties found. Try different cities or check internet connection.")
+    
+    return properties
+
+def run_full_hunt(args):
+    """Run complete lead generation suite"""
+    print("\n🚀 Starting Complete LeadFlow AI Hunt...")
+    print("=" * 60)
+    
+    all_leads = []
+    
+    # Run investor hunt
+    investors = run_investor_hunt(args)
+    if investors:
+        all_leads.extend([{**inv, 'lead_category': 'Investor'} for inv in investors])
+    
+    print("\n" + "="*60)
+    
+    # Run property hunt  
+    properties = run_property_hunt(args)
+    if properties:
+        all_leads.extend([{**prop, 'lead_category': 'Property'} for prop in properties])
+    
+    # Generate combined report
+    if all_leads:
+        generate_combined_report(all_leads)
+    
+    return all_leads
+
+def generate_combined_report(leads):
+    """Generate comprehensive lead generation report"""
+    investor_leads = [lead for lead in leads if lead['lead_category'] == 'Investor']
+    property_leads = [lead for lead in leads if lead['lead_category'] == 'Property']
+    
+    total_investor_value = len(investor_leads) * 200
+    total_property_value = sum(lead.get('estimated_value', 0) for lead in property_leads)
+    total_lead_value = len(investor_leads) * 200 + len(property_leads) * 250
+    
+    report = f"""
+🤖 LeadFlow AI - Complete Hunt Report
+{'='*60}
+
+📊 COMPREHENSIVE RESULTS:
+- Total Leads Generated: {len(leads)}
+- Investor Leads: {len(investor_leads)}
+- Property Leads: {len(property_leads)}
+
+💰 REVENUE POTENTIAL:
+- Investor Lead Value: ${total_investor_value:,} (@$200 each)
+- Property Lead Value: ${len(property_leads) * 250:,} (@$250 each)
+- Total Lead Market Value: ${total_lead_value:,}
+
+🏠 PROPERTY PORTFOLIO VALUE:
+- Total Property Value: ${total_property_value:,}
+- Average Property Value: ${total_property_value // max(len(property_leads), 1):,}
+
+🎯 NEXT STEPS:
+1. Contact investors with property opportunities
+2. Reach out to property heirs for quick sales
+3. Set up automated follow-up sequences
+4. Scale to additional cities for more leads
+
+📈 SCALING POTENTIAL:
+- Daily Operations: ${total_lead_value * 5:,} per week
+- Monthly Revenue: ${total_lead_value * 4:,} per month
+- Annual Revenue: ${total_lead_value * 50:,} per year
+
+Generated by LeadFlow AI - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+"""
+    
+    # Save comprehensive report
+    report_path = LeadFlowConfig.get_output_path('report')
+    with open(report_path, 'w') as f:
+        f.write(report)
+    
+    print(report)
+    print(f"\n📋 Comprehensive report saved to: {report_path}")
+
+def main():
+    """Main application entry point"""
+    parser = argparse.ArgumentParser(
+        description='🤖 LeadFlow AI - AI-Powered Real Estate Lead Generation',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python main.py investors --cities 3 --max-investors 25
+  python main.py properties --cities 2 --max-properties 15
+  python main.py full --cities 5
+  python main.py demo
+        """
+    )
+    
+    subparsers = parser.add_subparsers(dest='mode', help='Lead generation mode')
+    
+    # Investor hunt subcommand
+    investor_parser = subparsers.add_parser('investors', help='Find real estate investors on LinkedIn')
+    investor_parser.add_argument('--cities', type=int, default=3, help='Number of cities to search (default: 3)')
+    investor_parser.add_argument('--max-investors', type=int, default=25, help='Max investors per city (default: 25)')
+    
+    # Property hunt subcommand
+    property_parser = subparsers.add_parser('properties', help='Find inheritance properties')
+    property_parser.add_argument('--cities', type=int, default=3, help='Number of cities to search (default: 3)')
+    property_parser.add_argument('--max-properties', type=int, default=12, help='Max properties per city (default: 12)')
+    
+    # Full hunt subcommand
+    full_parser = subparsers.add_parser('full', help='Run complete lead generation suite')
+    full_parser.add_argument('--cities', type=int, default=3, help='Number of cities to search (default: 3)')
+    full_parser.add_argument('--max-investors', type=int, default=20, help='Max investors per city (default: 20)')
+    full_parser.add_argument('--max-properties', type=int, default=10, help='Max properties per city (default: 10)')
+    
+    # Demo mode
+    demo_parser = subparsers.add_parser('demo', help='Run demonstration with sample data')
+    
+    args = parser.parse_args()
+    
+    # Print banner
+    print_banner()
+    
+    if not args.mode:
+        parser.print_help()
+        return
+    
+    try:
+        if args.mode == 'investors':
+            run_investor_hunt(args)
+        elif args.mode == 'properties':
+            run_property_hunt(args)
+        elif args.mode == 'full':
+            run_full_hunt(args)
+        elif args.mode == 'demo':
+            print("\n🎬 Demo Mode - Generating Sample Data...")
+            print("In full version, this would generate live leads!")
+            print("\n✨ Features available in full LeadFlow AI:")
+            print("   🔍 LinkedIn investor scraping")
+            print("   🏠 Inheritance property discovery")
+            print("   📞 Heir contact information")
+            print("   💰 Property value estimation")
+            print("   📊 AI-powered lead scoring")
+            print("\n🚀 Ready to generate real revenue!")
+        
+    except KeyboardInterrupt:
+        print("\n\n⏹️  Hunt interrupted by user")
+    except Exception as e:
+        print(f"\n❌ Error during lead generation: {e}")
+        print("Please check your configuration and try again.")
+
+if __name__ == "__main__":
+    main()
